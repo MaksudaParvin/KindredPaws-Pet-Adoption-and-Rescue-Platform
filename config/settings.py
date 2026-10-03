@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django_filters",
 
     # Local
-    # "adoption",
+    "adoption",
 ]
 
 MIDDLEWARE = [
@@ -153,6 +153,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 }
+
 
 
 SIMPLE_JWT = {
