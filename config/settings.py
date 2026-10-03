@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django_filters",
 
     # Local
-    "adoption",
+    # "adoption",
 ]
 
 MIDDLEWARE = [
@@ -140,6 +140,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+
 
 
 REST_FRAMEWORK = {
