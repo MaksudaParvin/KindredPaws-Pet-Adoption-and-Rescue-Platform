@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db import transaction
+
 from .models import Pet, AdoptionRequest
 
 
@@ -64,3 +66,11 @@ class AdoptionRequestAdmin(admin.ModelAdmin):
         "message",
         "created_at",
     )
+
+    @transaction.atomic
+    def save_model(self, request, obj, form, change):
+        if obj.status == AdoptionRequest.Status.APPROVED:
+            obj.pet.status = Pet.Status.ADOPTED
+            obj.pet.save(update_fields=["status"])
+
+        super().save_model(request, obj, form, change)
