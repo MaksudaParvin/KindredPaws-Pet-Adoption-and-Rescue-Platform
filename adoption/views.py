@@ -5,6 +5,8 @@ from .models import Pet, AdoptionRequest
 from .serializers import PetSerializer, AdoptionRequestSerializer
 from .permissions import IsAdminOrReadOnly, IsAuthenticated, IsAdminOrOwner
 
+from django.db import transaction
+
 
 class PetViewSet(viewsets.ModelViewSet):
     queryset = Pet.objects.all()
@@ -56,10 +58,11 @@ class AdoptionRequestViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @transaction.atomic
     def perform_update(self, serializer):
         adoption_request = self.get_object()
 
-        # Only admin can change approval status
+        # Only admin can change the adoption request status
         if not self.request.user.is_staff:
             serializer.save(
                 status=adoption_request.status
@@ -68,8 +71,22 @@ class AdoptionRequestViewSet(viewsets.ModelViewSet):
 
         updated_request = serializer.save()
 
-        # If admin approves the request,
-        # mark the pet as adopted.
+        # If the request is approved
         if updated_request.status == AdoptionRequest.Status.APPROVED:
-            updated_request.pet.status = Pet.Status.ADOPTED
-            updated_request.pet.save(update_fields=["status"])
+
+            pet = updated_request.pet
+
+            # Mark the pet as adopted
+            pet.status = Pet.Status.ADOPTED
+            pet.save(update_fields=["status"])
+
+            # Reject all other pending requests for this pet
+            AdoptionRequest.objects.filter(
+                pet=pet,
+                status=AdoptionRequest.Status.PENDING
+            ).exclude(
+                id=updated_request.id
+            ).update(
+                status=AdoptionRequest.Status.REJECTED
+            )
+
