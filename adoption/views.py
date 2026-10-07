@@ -55,3 +55,21 @@ class AdoptionRequestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        adoption_request = self.get_object()
+
+        # Only admin can change approval status
+        if not self.request.user.is_staff:
+            serializer.save(
+                status=adoption_request.status
+            )
+            return
+
+        updated_request = serializer.save()
+
+        # If admin approves the request,
+        # mark the pet as adopted.
+        if updated_request.status == AdoptionRequest.Status.APPROVED:
+            updated_request.pet.status = Pet.Status.ADOPTED
+            updated_request.pet.save(update_fields=["status"])
