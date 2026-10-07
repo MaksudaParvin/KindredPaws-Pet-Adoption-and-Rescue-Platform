@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Pet, AdoptionRequest
 from .serializers import PetSerializer, AdoptionRequestSerializer
-from .permissions import IsAdminOrReadOnly, IsAuthenticated
+from .permissions import IsAdminOrReadOnly, IsAuthenticated, IsAdminOrOwner
 
 
 class PetViewSet(viewsets.ModelViewSet):
@@ -43,7 +43,7 @@ class PetViewSet(viewsets.ModelViewSet):
 
 class AdoptionRequestViewSet(viewsets.ModelViewSet):
     serializer_class = AdoptionRequestSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrOwner]
 
     def get_queryset(self):
         user = self.request.user

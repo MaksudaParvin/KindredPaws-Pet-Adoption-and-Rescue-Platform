@@ -15,3 +15,19 @@ class IsAdminOrReadOnly(BasePermission):
             request.user.is_authenticated
             and request.user.is_staff
         )
+
+
+class IsAdminOrOwner(BasePermission):
+    """
+    Admin can access all adoption requests.
+    Normal users can access only their own requests.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_staff:
+            return True
+
+        return obj.user == request.user
