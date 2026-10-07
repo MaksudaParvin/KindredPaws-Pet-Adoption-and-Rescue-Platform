@@ -1,9 +1,9 @@
 from rest_framework import filters, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Pet
-from .serializers import PetSerializer
-from .permissions import IsAdminOrReadOnly
+from .models import Pet, AdoptionRequest
+from .serializers import PetSerializer, AdoptionRequestSerializer
+from .permissions import IsAdminOrReadOnly, IsAuthenticated
 
 
 class PetViewSet(viewsets.ModelViewSet):
@@ -38,3 +38,20 @@ class PetViewSet(viewsets.ModelViewSet):
     ]
 
     ordering = ["-created_at"]
+
+
+
+class AdoptionRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = AdoptionRequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff:
+            return AdoptionRequest.objects.all()
+
+        return AdoptionRequest.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
