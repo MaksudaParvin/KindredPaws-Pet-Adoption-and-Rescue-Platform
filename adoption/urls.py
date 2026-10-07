@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import PetViewSet
+from .views import PetViewSet, AdoptionRequestViewSet
 
 
 router = DefaultRouter()
@@ -11,6 +11,8 @@ router.register(
     PetViewSet,
     basename="pet"
 )
+
+router.register("adoptions", AdoptionRequestViewSet, basename="adoption")
 
 
 urlpatterns = [
