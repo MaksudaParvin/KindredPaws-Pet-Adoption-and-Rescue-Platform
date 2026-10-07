@@ -5,10 +5,6 @@ from .models import Pet
 from .serializers import PetSerializer
 from .permissions import IsAdminOrReadOnly
 
-from rest_framework import generics
-from rest_framework.permissions import AllowAny
-from .serializers import RegisterSerializer
-
 
 class PetViewSet(viewsets.ModelViewSet):
     queryset = Pet.objects.all()
@@ -42,8 +38,3 @@ class PetViewSet(viewsets.ModelViewSet):
     ]
 
     ordering = ["-created_at"]
-
-
-class RegisterView(generics.CreateAPIView):
-    serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
