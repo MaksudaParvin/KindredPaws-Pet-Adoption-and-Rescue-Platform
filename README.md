@@ -117,8 +117,8 @@ pet-adoption-rescue/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/MaksudaParvin/KindredPaws-Pet-Adoption-and-Rescue-Platform.git
-cd "KindredPaws-Pet-Adoption-and-Rescue-Platform"
+git clone https://github.com/MaksudaParvin/Pet-Adoption-and-Rescue-API.git
+cd "Pet-Adoption-and-Rescue-API"
 ```
 
 ### 2. Create a virtual environment
